@@ -1,45 +1,44 @@
 package application;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import db.DB;
+import db.DbIntegrityException;
+
 
 public class Program {
+
+
 
 	public static void main(String[] args) {
 
 		Connection connection = null;
-		PreparedStatement preparedStatement = null;
+
+		PreparedStatement prepaedstatement = null;
 
 		try {
-
 			connection = DB.getConnection();
 
-			preparedStatement = connection.prepareStatement(
-					"UPDATE seller "
-					+ "SET BaseSalary = BaseSalary + ? "
+			prepaedstatement = connection.prepareStatement(
+					"DELETE FROM department "
 					+ "WHERE "
-					+ "(DepartmentId = ?)");
+					+ "Id = ?");
 
+			prepaedstatement.setInt(1, 5);
 
-			preparedStatement.setDouble(1, 200.0);
-			preparedStatement.setInt(2, 2);
-
-			int rowsAffected = preparedStatement.executeUpdate();
+			int rowsAffected = prepaedstatement.executeUpdate();
 			System.out.println("Done! Rows affected: " + rowsAffected);
-
 		}
 
 		catch (SQLException e) {
-			e.printStackTrace();
+
+			throw new DbIntegrityException(e.getMessage());
+
 		} 
 
 		finally {
-
-			DB.closeStatement(preparedStatement);
+			DB.closeStatement(prepaedstatement);
 			DB.closeConnection();
-
 		}
 
 	}
